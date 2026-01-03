@@ -61,29 +61,24 @@
         <textarea id="result" rows="3" readonly></textarea>
       </div>
     </main>
-  </div>
-<script>
-  // Set year
+  </div><script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
   function veltrixTransform(text, shift, isEncrypt) {
     let result = "";
+    let letterIndex = 0; // counts only letters
 
     for (let ch of text) {
       if (/[a-zA-Z]/.test(ch)) {
+        letterIndex++;
+
         const base = ch === ch.toUpperCase() ? 'A' : 'a';
-        const pos = ch.charCodeAt(0) - base.charCodeAt(0); // 0–25
-        const alphaIndex = pos + 1; // 1–26
+        const pos = ch.charCodeAt(0) - base.charCodeAt(0);
 
-        let direction;
+        // Odd position → backward, Even position → forward
+        let direction = (letterIndex % 2 === 0) ? shift : -shift;
 
-        if (isEncrypt) {
-          // ENCRYPTION RULE
-          direction = (alphaIndex % 2 === 0) ? shift : -shift;
-        } else {
-          // DECRYPTION (INVERSE RULE)
-          direction = (alphaIndex % 2 === 0) ? -shift : shift;
-        }
+        if (!isEncrypt) direction = -direction;
 
         const newPos = (pos + direction + 26) % 26;
         result += String.fromCharCode(base.charCodeAt(0) + newPos);
@@ -102,5 +97,6 @@
       veltrixTransform(text, shift, isEncrypt);
   }
 </script>
+
 </body>
 </html>
