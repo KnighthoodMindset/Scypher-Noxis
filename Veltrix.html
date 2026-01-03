@@ -62,43 +62,45 @@
       </div>
     </main>
   </div>
+<script>
+  // Set year
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-  <script>
-    // Set year
-    document.getElementById('year').textContent = new Date().getFullYear();
+  function veltrixTransform(text, shift, isEncrypt) {
+    let result = "";
 
-    // Veltrix Cipher Logic
-    function veltrixTransform(text, shift, isEncrypt) {
-      let result = "";
+    for (let ch of text) {
+      if (/[a-zA-Z]/.test(ch)) {
+        const base = ch === ch.toUpperCase() ? 'A' : 'a';
+        const pos = ch.charCodeAt(0) - base.charCodeAt(0); // 0–25
+        const alphaIndex = pos + 1; // 1–26
 
-      for (let ch of text) {
-        if (/[a-zA-Z]/.test(ch)) {
-          const base = ch === ch.toUpperCase() ? 'A' : 'a';
-          const pos = ch.charCodeAt(0) - base.charCodeAt(0); // 0–25
-          const alphaIndex = pos + 1; // 1–26
+        let direction;
 
-          // Even alphabet → forward, Odd alphabet → backward
-          const direction = (alphaIndex % 2 === 0) ? shift : -shift;
-
-          const newPos = isEncrypt
-            ? (pos + direction + 26) % 26
-            : (pos - direction + 26) % 26;
-
-          result += String.fromCharCode(base.charCodeAt(0) + newPos);
+        if (isEncrypt) {
+          // ENCRYPTION RULE
+          direction = (alphaIndex % 2 === 0) ? shift : -shift;
         } else {
-          result += ch;
+          // DECRYPTION (INVERSE RULE)
+          direction = (alphaIndex % 2 === 0) ? -shift : shift;
         }
+
+        const newPos = (pos + direction + 26) % 26;
+        result += String.fromCharCode(base.charCodeAt(0) + newPos);
+      } else {
+        result += ch;
       }
-
-      return result;
     }
 
-    function processText(isEncrypt) {
-      const text = document.getElementById('plaintext').value || "";
-      const shift = parseInt(document.getElementById('shift').value) || 1;
-      const output = veltrixTransform(text, shift, isEncrypt);
-      document.getElementById('result').value = output;
-    }
-  </script>
+    return result;
+  }
+
+  function processText(isEncrypt) {
+    const text = document.getElementById('plaintext').value || "";
+    const shift = parseInt(document.getElementById('shift').value) || 1;
+    document.getElementById('result').value =
+      veltrixTransform(text, shift, isEncrypt);
+  }
+</script>
 </body>
 </html>
